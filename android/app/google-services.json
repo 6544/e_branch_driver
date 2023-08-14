@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "840333503259",
+    "project_id": "e-branch-804fb",
+    "storage_bucket": "e-branch-804fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:840333503259:android:daf33edc695368ca8501be",
+        "android_client_info": {
+          "package_name": "com.example.e_branch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "840333503259-67eg9homkai198lfo2p2a2doo6vi35qb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUfhU5hrH_lGxAO__x6a_-IohYrFHglrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "840333503259-67eg9homkai198lfo2p2a2doo6vi35qb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
