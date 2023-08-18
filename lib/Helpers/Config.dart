@@ -1,3 +1,4 @@
+import 'package:e_branch/secrets.dart';
 import 'package:flutter/material.dart';
 
 class Config {
@@ -25,6 +26,6 @@ class Config {
   static String url = "http://e-branch.feckrah.com/";
 
 
-  static String googleApiAndroid = "AIzaSyD38YQy10FmPig_gdVZAaFmbYh9znMoPds";
-  static String googleApiIOS = "AIzaSyCT0kQS59FPeZtL9tRvshyGDz1iToySVo0";
+  static String googleApiAndroid = googleAndroidApi;
+  static String googleApiIOS = googleIosApi;
 }
