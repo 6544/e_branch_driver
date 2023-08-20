@@ -22,7 +22,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -38,12 +37,9 @@ class MyApp extends StatelessWidget {
             primarySwatch: Config.mainColor,
             scaffoldBackgroundColor: Colors.white,
             appBarTheme: const AppBarTheme(color: Colors.white,iconTheme: IconThemeData(color: Colors.white)),
-         // textTheme: //GoogleFonts.cairoTextTheme(Theme.of(context).textTheme).copyWith(
-            //bodyText1: GoogleFonts.cairo(textStyle: Theme.of(context).textTheme.bodyText1),
-           // ),
           ),
           home:
-         const Splashscreen(),//HomeScreen()//const Splashscreen(),
+         const Splashscreen(),
         ),
       ),
     );
