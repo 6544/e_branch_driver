@@ -1,5 +1,7 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,11 +12,12 @@ import '../../../Helpers/HelperFunctions.dart';
 import '../../../Helpers/Navigation.dart';
 import '../../../Models/AuthModels/UserModel.dart';
 import '../../../Models/OrderModel.dart';
+import '../../../Models/maekets.dart';
 import '../../../Providers/Home/HomeProvider.dart';
 import '../../../Providers/Home/HomeStates.dart';
 import '../HomeScreen.dart';
 class StorePage extends StatefulWidget {
-  OrderData? order;
+  Map<String, dynamic>? order;
   StorePage({Key? key,this.order}) : super(key: key);
 
   @override
@@ -22,15 +25,35 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> {
-  late GoogleMapController googleMapController;
-
+  late GoogleMapController mapController;
+  late MarketsModel marketsModel;
+  Set<Marker> _markers = {};
   late HomeProvider reasonProvider;
-
+  late Position currentPosition;
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
+      currentPosition = await determinePosition();
+      marketsModel = await Provider.of<HomeProvider>(context,listen: false).getMarketsWithLocation(currentPosition.latitude,currentPosition.longitude);
+      mapController.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentPosition.latitude,currentPosition.longitude),zoom: 10),));
+      for (var element in marketsModel.vendors!){
+        _markers.add(
+            Marker(markerId: MarkerId(element.id.toString()),
+                onTap: ()async{
+                  //     Navigation.mainNavigator(context, MerchantScreen(id: element.id.toString(),));
+                },
+                position: LatLng(
+                    double.parse("${element.lat.toString()}"), double.parse("${element.lang.toString()}")),icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size.fromHeight(5)), "images/logo2.png",))
+
+        );
+      }
+      setState(() {});
+      print("_markers.length ${_markers.length}");
+
+    });
     // TODO: implement initState
     super.initState();
-    print(widget.order!.status);
+    print(widget.order!["satus"]);
   }
   @override
   Widget build(BuildContext context) {
@@ -53,7 +76,7 @@ class _StorePageState extends State<StorePage> {
                     width: Config.responsiveWidth(context)*0.68,
                     color: Colors.white,
                     alignment: Alignment.centerRight,
-                    child: CustomText(text: widget.order!.products![0].user!.name, fontSize: 14),
+                    child: CustomText(text: widget.order!["name"], fontSize: 14),
                   ),
                   Container(
                     height: 50,
@@ -70,8 +93,8 @@ class _StorePageState extends State<StorePage> {
 
               const SizedBox(height: 20,),
               CustomButton(text: "اتصال", onPressed: (){
-                print(widget.order!.products![0].user!.phone);
-                  launch("tel:${widget.order!.products![0].user!.phone}");
+               // print(widget.order!.products![0].user!.phone);
+                 launch("tel:${widget.order!["phone"]}");
               },color: Config.mainColor,),
               const SizedBox(height: 20,),
               Row(
@@ -82,7 +105,7 @@ class _StorePageState extends State<StorePage> {
                     width: Config.responsiveWidth(context)*0.68,
                     color: Colors.white,
                     alignment: Alignment.centerRight,
-                    child: CustomText(text: widget.order!.products![0].user!.address, fontSize: 14),
+                    child: CustomText(text: widget.order!["location"], fontSize: 14),
                   ),
                   Container(
                     height: 50,
@@ -104,25 +127,23 @@ class _StorePageState extends State<StorePage> {
                   alignment: Alignment.center,
                   children: [
                     GoogleMap(
-                      onMapCreated: (controller){
-                        googleMapController = controller;
-                      },
-                      initialCameraPosition: CameraPosition(target: LatLng(double.parse(widget.order!.products![0].user!.lat.toString()),double.parse(widget.order!.products![0].user!.lang.toString())),zoom: 18),
+                      onMapCreated: onMapCreated,
+                      initialCameraPosition: CameraPosition(target: LatLng(/*double.parse(widget.order!.products![0].user!.lat.toString()),double.parse(widget.order!.products![0].user!.lang.toString())*/29,30)/*,zoom: 16*/),
                       myLocationButtonEnabled: true,
                       myLocationEnabled: true,
-                      // markers: _markers,
+                       markers: _markers,
                     ),
                     Icon(Icons.add_location,color: Config.mainColor,size: 30,)
                   ],
                 ),
               ),
               const SizedBox(height: 20,),
-              if(widget.order!.status == "تم الموافقة من السائق")
+              if(widget.order!["status"] == "تم الموافقة من السائق")
                 Column(
                   children: [
                     CustomButton(text: "التوجه للمتجر", onPressed: (){
-                      print("jhbhjbh ${double.parse(widget.order!.products![0].user!.lat.toString())}");
-                      GoogleMapInitialize.openMap(double.parse(widget.order!.products![0].user!.lat.toString()), double.parse(widget.order!.products![0].user!.lang.toString()));
+                      print("jhbhjbh ${double.parse("1"/*widget.order!.products![0].user!.lat.toString()*/)}");
+                      GoogleMapInitialize.openMap(double.parse("2"/*widget.order!.products![0].user!.lat.toString()*/), double.parse(/*widget.order!.products![0].user!.lang.toString()*/"2"));
                     }),
                     const SizedBox(height: 10,),
                     ChangeNotifierProvider(
@@ -157,7 +178,7 @@ class _StorePageState extends State<StorePage> {
                                                 ),
                                                 CustomButton(text: "ارسال", onPressed: () async {
                                                   Map<String,dynamic> formData = {
-                                                    "orderid": widget.order!.id.toString(),
+                                                    "orderid": widget.order!["id"].toString(),
                                                     "status": "debug",
                                                     "reason": reasonProvider.reasonsModel.data![reasonProvider.radioButtonValue].name
                                                   };
@@ -185,7 +206,7 @@ class _StorePageState extends State<StorePage> {
                     const SizedBox(height: 10,),
                     CustomButton(text: "الاستلام من المتجر", onPressed: () async {
                             Map<String,dynamic> formData = {
-                              "orderid": widget.order!.id.toString(),
+                              "orderid": widget.order!["id"].toString(),
                               "status": "donevendor",
                               "reason": ""
                             };
@@ -197,12 +218,12 @@ class _StorePageState extends State<StorePage> {
                     ),
                   ],
                 )
-              else if(widget.order!.status == "تم الموافقة من المتجر")
+              else if(widget.order!["status"] == "تم الموافقة من المتجر")
                 Consumer<HomeProvider>(
                   builder: (context, reasonProvider,child) {
                     return HomeStates.reasonsState != ReasonsState.LOADING?CustomButton(text: "الموافقة علي الطلب", onPressed: () async {
                       Map<String,dynamic> formData = {
-                        "orderid": widget.order!.id.toString(),
+                        "orderid": widget.order!["id"].toString(),
                         "status": "accept",
                         "reason": ""
                       };
@@ -219,5 +240,8 @@ class _StorePageState extends State<StorePage> {
         ),
       ),
     );
+  }
+  Future<void> onMapCreated(GoogleMapController controller) async {
+    mapController = controller;
   }
 }

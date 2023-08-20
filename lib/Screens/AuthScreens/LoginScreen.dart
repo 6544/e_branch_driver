@@ -74,7 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           context: context,
                         );
                         if (res == "success") {
-                          toast("تم التسجيل بنجاح", context);
+                       //   toast("تم التسجيل بنجاح", context);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Directionality(textDirection: TextDirection.rtl,child: Text("تم التسجيل بنجاح"))));
+
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (context) => HomeScreen(),

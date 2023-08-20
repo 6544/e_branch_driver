@@ -21,7 +21,88 @@ class _WalletScreenState extends State<WalletScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(text: "الرصيد"),
-      body: ChangeNotifierProvider(
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Image.asset("images/logo.png",width: 180,height: 180,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 40,
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    alignment: Alignment.center,
+                    child: CustomText(text: 400/*homeProvider!.walletModel!.wallet*/.toString(), fontSize: 16),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),border: Border.all()),
+                  ),
+                  CustomText(text: "رصيدك هو : ", fontSize: 16),
+                ],
+              ),
+              CustomButton(text: "اشحن", onPressed: (){
+                Navigation.mainNavigator(context, const ChargeWalletScreen());
+              },color: Config.mainColor,),
+              Container(
+                width: double.infinity,
+                height: 50,
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                alignment: Alignment.center,
+                child: Row(
+                  children: [
+                    CustomText(text: 5/*homeProvider!.walletModel!.countorders*/.toString(), fontSize: 16,color: Config.mainColor,),
+                    const Spacer(),
+                    CustomText(text: "الطلبات المنجزة هذا الشهر : ", fontSize: 16),
+                  ],
+                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),border: Border.all()),
+              ),
+              Container(
+                width: double.infinity,
+                height: 50,
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                alignment: Alignment.center,
+                child: Row(
+                  children: [
+                    CustomText(text: "${50/*homeProvider!.walletModel!.gain*/} ر.س", fontSize: 16,color: Config.mainColor,),
+                    const Spacer(),
+                    CustomText(text: "الدخل هذا الشهر : ", fontSize: 16),
+                  ],
+                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),border: Border.all()),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CustomText(text: "عمليات الشحن الاخيرة", fontSize: 16),
+                ],
+              ),
+              ListBody(
+                children: List.generate(1/*homeProvider!.walletModel!.data!.length*/, (index) {
+                  return Container(
+                    width: double.infinity,
+                    height: 50,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    alignment: Alignment.center,
+                    child: Row(
+                      children: [
+                        CustomText(text: "${20/*homeProvider!.walletModel!.data![index].card!.price*/} ر.س", fontSize: 16,color: Config.mainColor,),
+                        const Spacer(),
+                        CustomText(text: /*homeProvider!.walletModel!.data![index].card!.createdAt!*/DateTime.now().toString().substring(0,10), fontSize: 16),
+                      ],
+                    ),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5),border: Border.all()),
+                  );
+                }),
+              )
+            ],
+          ),
+        ),
+      ),/*ChangeNotifierProvider(
         create: (BuildContext context) => HomeProvider()..getWallet(),
         child: Selector<HomeProvider,ReasonsState>(
           selector: (context,provider){
@@ -119,7 +200,7 @@ class _WalletScreenState extends State<WalletScreen> {
             );
           }
         ),
-      ),
+      ),*/
     );
   }
 }

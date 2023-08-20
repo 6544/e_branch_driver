@@ -19,7 +19,35 @@ class _RateScreenState extends State<RateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(text: "التقييم"),
-      body: ChangeNotifierProvider(
+      body:SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 30,),
+            Image.asset("images/logo.png",width: 180,height: 180,),
+            const SizedBox(height: 30,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                RatingBarIndicator(
+                  rating: double.parse(/*homeProvider!.response!['rate']*/5.toString()),
+                  direction: Axis.horizontal,
+                  itemCount: 5,
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                ),
+                const SizedBox(width: 10,),
+                CustomText(text: "تقييمك هو ", fontSize: 20,fontWeight: FontWeight.w600,)
+              ],
+            )
+          ],
+        ),
+      ), /*ChangeNotifierProvider(
         create: (BuildContext context)  => HomeProvider()..getRate(),
         child: Selector<HomeProvider,ReasonsState>(
           selector: (context,provider){
@@ -65,7 +93,7 @@ class _RateScreenState extends State<RateScreen> {
             );
           }
         ),
-      ),
+      ),*/
     );
   }
 }

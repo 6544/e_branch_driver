@@ -330,7 +330,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     status=="online"?Column(
                       children: [
-                        CustomText(text: /*"${(distance2!/1000).toString().length>7?(distance2!/1000).toString().substring(0,6):(distance2!/1000)}*/" كم", fontSize: 11,fontWeight: FontWeight.w600,),
+                        CustomText(text: "${(distance2!/1000).toString().length>7?(distance2!/1000).toString().substring(0,6):(distance2!/1000)}كم", fontSize: 11,fontWeight: FontWeight.w600,),
                         Image.asset("images/arrow.png",width: 50,),
                       ],
                     ):status=="onproccess"?Column(
@@ -359,7 +359,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     status=="online"?Column(
                       children: [
-                        CustomText(text: /*"${(distance1!/1000).toString().length>7?(distance1!/1000).toString().substring(0,6):(distance1!/1000)}*/"كم", fontSize: 11,fontWeight: FontWeight.w600,),
+                        CustomText(text: "${(distance1!/1000).toString().length>7?(distance1!/1000).toString().substring(0,6):(distance1!/1000)}كم", fontSize: 11,fontWeight: FontWeight.w600,),
                         Image.asset("images/arrow.png",width: 50,),
                       ],
                     ):status=="onproccess"?Column(
@@ -405,7 +405,7 @@ class OrderCard extends StatelessWidget {
                               color: Colors.redAccent
                           ),
                           alignment: Alignment.center,
-                          child: CustomText(text: /*"$price*/".س", fontSize: 14,color: Colors.white,),
+                          child: CustomText(text: " $price ر.س ", fontSize: 14,color: Colors.white,),
                         ),
                       ],
                     ),
@@ -421,7 +421,7 @@ class OrderCard extends StatelessWidget {
                               color: Colors.redAccent
                           ),
                           alignment: Alignment.center,
-                          child: CustomText(text: /*"$deliveryPrice*/"ر .س", fontSize: 14,color: Colors.white,),
+                          child: CustomText(text: "$deliveryPrice ر.س", fontSize: 14,color: Colors.white,),
                         ),
                       ],
                     ),
@@ -436,7 +436,7 @@ class OrderCard extends StatelessWidget {
                       child: Column(
                         children: [
                           CustomText(text: "رقم الطلب", fontSize: 14,color: Colors.white,),
-                          CustomText(text: ""/*orderId*/, fontSize: 14,color: Colors.white,),
+                          CustomText(text: orderId, fontSize: 14,color: Colors.white,),
                         ],
                       ),
                     ),

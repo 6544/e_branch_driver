@@ -5,11 +5,26 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../Models/OrderModel.dart';
 import '../../Models/ReasonsModel.dart';
 import '../../Models/WalletModel.dart';
+import '../../Models/maekets.dart';
 import '../../Repositories/HomeRepository.dart';
 import 'HomeStates.dart';
 
 class HomeProvider extends ChangeNotifier{
-
+  Future<MarketsModel> getMarketsWithLocation(lat,lang)async{
+    HomeStates.marketsState = MarketsState.LOADING;
+    notifyListeners();
+    // Map response = await HomeRepositories.getMarketsWithLocation(lat,lang);
+    try{
+      // MarketsModel marketsModel = MarketsModel.fromJson(response);
+      HomeStates.marketsState = MarketsState.LOADED;
+      notifyListeners();
+      return throw Exception(""); //marketsModel;
+    }catch(e){
+      HomeStates.marketsState = MarketsState.ERROR;
+      notifyListeners();
+      return Future.error(e);
+    }
+  }
   OrderModel? onlineOrderModel;
   OrderModel? onproccessOrderModel;
   OrderModel? debugOrderModel;

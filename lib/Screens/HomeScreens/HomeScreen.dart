@@ -55,11 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: const EdgeInsets.all(8),
         borderRadius: BorderRadius.circular(8),
       ).show(context);
-      Provider.of<HomeProvider>(context,listen: false).getOrders("online");
+      /*Provider.of<HomeProvider>(context,listen: false).getOrders("online");
       Provider.of<HomeProvider>(context,listen: false).getOrders("onproccess");
       Provider.of<HomeProvider>(context,listen: false).getOrders("receved");
       Provider.of<HomeProvider>(context,listen: false).getOrders("debug");
-      Provider.of<HomeProvider>(context,listen: false).getOrders("back");
+      Provider.of<HomeProvider>(context,listen: false).getOrders("back");*/
       setState(() {});
     });
 

@@ -1,4 +1,5 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Components/Components.dart';
@@ -8,7 +9,7 @@ import '../../../Models/OrderModel.dart';
 import 'ClientPage.dart';
 import 'StorePage.dart';
 class OrderDetailsScreen extends StatefulWidget {
-  OrderData? order;
+ Map<String, dynamic>? order;
   OrderDetailsScreen({Key? key,required this.order}) : super(key: key);
 
   @override

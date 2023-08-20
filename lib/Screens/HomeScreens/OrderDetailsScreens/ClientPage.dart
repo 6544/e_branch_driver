@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -12,12 +13,13 @@ import '../../../Helpers/HelperFunctions.dart';
 import '../../../Helpers/Navigation.dart';
 import '../../../Models/AuthModels/UserModel.dart';
 import '../../../Models/OrderModel.dart';
+import '../../../Models/maekets.dart';
 import '../../../Providers/Home/HomeProvider.dart';
 import '../../../Providers/Home/HomeStates.dart';
 import '../HomeScreen.dart';
 
 class ClientPage extends StatefulWidget {
-  OrderData? order;
+  Map<String, dynamic>? order;
   ClientPage({Key? key,this.order}) : super(key: key);
 
   @override
@@ -25,7 +27,7 @@ class ClientPage extends StatefulWidget {
 }
 
 class _ClientPageState extends State<ClientPage> {
-  late GoogleMapController googleMapController;
+/*  late GoogleMapController googleMapController;
 
   late HomeProvider reasonProvider;
 
@@ -33,7 +35,37 @@ class _ClientPageState extends State<ClientPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("gvhgvghvgh  ${widget.order!.lat}");
+   // print("gvhgvghvgh  ${widget.order!.lat}");
+  }*/
+  late GoogleMapController mapController;
+  late MarketsModel marketsModel;
+  Set<Marker> _markers = {};
+  late HomeProvider reasonProvider;
+  late Position currentPosition;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
+      currentPosition = await determinePosition();
+      marketsModel = await Provider.of<HomeProvider>(context,listen: false).getMarketsWithLocation(currentPosition.latitude,currentPosition.longitude);
+      mapController.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentPosition.latitude,currentPosition.longitude),zoom: 10),));
+      for (var element in marketsModel.vendors!){
+        _markers.add(
+            Marker(markerId: MarkerId(element.id.toString()),
+                onTap: ()async{
+                  //     Navigation.mainNavigator(context, MerchantScreen(id: element.id.toString(),));
+                },
+                position: LatLng(
+                    double.parse("${element.lat.toString()}"), double.parse("${element.lang.toString()}")),icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size.fromHeight(5)), "images/logo2.png",))
+
+        );
+      }
+      setState(() {});
+      print("_markers.length ${_markers.length}");
+
+    });
+    // TODO: implement initState
+    super.initState();
+    print(widget.order!["satus"]);
   }
   @override
   Widget build(BuildContext context) {
@@ -56,7 +88,7 @@ class _ClientPageState extends State<ClientPage> {
                     width: Config.responsiveWidth(context)*0.68,
                     color: Colors.white,
                     alignment: Alignment.centerRight,
-                    child: CustomText(text: widget.order!.driver!.name, fontSize: 14),
+                    child: CustomText(text: widget.order!["name"], fontSize: 14),
                   ),
                   Container(
                     height: 50,
@@ -79,7 +111,7 @@ class _ClientPageState extends State<ClientPage> {
                     width: Config.responsiveWidth(context)*0.68,
                     color: Colors.white,
                     alignment: Alignment.centerRight,
-                    child: CustomText(text: widget.order!.id.toString(), fontSize: 14),
+                    child: CustomText(text: widget.order!["id"], fontSize: 14),
                   ),
                   Container(
                     height: 50,
@@ -95,7 +127,7 @@ class _ClientPageState extends State<ClientPage> {
               ),
               const SizedBox(height: 20,),
               CustomButton(text: "اتصال", onPressed: (){
-                launch("tel:${widget.order!.products![0].user!.phone}");
+            //   launch("tel:${widget.order!.products![0].user!.phone}");
               },color: Config.mainColor,),
               const SizedBox(height: 20,),
 
@@ -105,12 +137,12 @@ class _ClientPageState extends State<ClientPage> {
                     DataColumn(label: CustomText(text: "التفاصيل", fontSize: 16)),
                     DataColumn(label: CustomText(text: "الكمية", fontSize: 16)),
                     DataColumn(label: CustomText(text: "السعر", fontSize: 16)),
-                  ], rows: List.generate(widget.order!.products!.length, (index) {
+                  ], rows: List.generate(/*widget.order!.products!.length*/1, (index) {
                     return DataRow(cells: [
-                      DataCell(CustomText(text: widget.order!.products![index].name, fontSize: 13)),
-                      DataCell(CustomText(text: widget.order!.products![index].description, fontSize: 13)),
-                      DataCell(CustomText(text: widget.order!.amount, fontSize: 13)),
-                      DataCell(CustomText(text: "${widget.order!.products![index].price} ر.س", fontSize: 13)),
+                      DataCell(CustomText(text: widget.order!["name"], fontSize: 13)),
+                      DataCell(CustomText(text: widget.order!["description"], fontSize: 13)),
+                      DataCell(CustomText(text:5.toString() /*widget.order!.amount*/, fontSize: 13)),
+                      DataCell(CustomText(text: "${widget.order!["price"]} ر.س", fontSize: 13)),
                     ]);
                   }), // Allows to add a border decoration around your table
                   ),
@@ -119,7 +151,7 @@ class _ClientPageState extends State<ClientPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  CustomText(text: "الاجمالي ${widget.order!.price} ر.س", fontSize: 18),
+                  CustomText(text: "الاجمالي ${widget.order!["price"]} ر.س", fontSize: 18),
                 ],
               ),
               const SizedBox(height: 10,),
@@ -131,7 +163,7 @@ class _ClientPageState extends State<ClientPage> {
                     width: Config.responsiveWidth(context)*0.68,
                     color: Colors.white,
                     alignment: Alignment.centerRight,
-                    child: CustomText(text: widget.order!.products![0].user!.address, fontSize: 14),
+                    child: CustomText(text: widget.order!["price"], fontSize: 14),
                   ),
                   Container(
                     height: 50,
@@ -153,25 +185,23 @@ class _ClientPageState extends State<ClientPage> {
                   alignment: Alignment.center,
                   children: [
                     GoogleMap(
-                      onMapCreated: (controller){
-                        googleMapController = controller;
-                      },
-                      initialCameraPosition: CameraPosition(target: LatLng(double.parse(widget.order!.lat.toString()),double.parse(widget.order!.lang.toString())),zoom: 18),
+                      onMapCreated: onMapCreated,
+                      initialCameraPosition: CameraPosition(target: LatLng(/*double.parse(widget.order!.products![0].user!.lat.toString()),double.parse(widget.order!.products![0].user!.lang.toString())*/29,30)/*,zoom: 16*/),
                       myLocationButtonEnabled: true,
                       myLocationEnabled: true,
-                      // markers: _markers,
+                      markers: _markers,
                     ),
                     Icon(Icons.add_location,color: Config.mainColor,size: 30,)
                   ],
                 ),
               ),
               const SizedBox(height: 20,),
-              if(widget.order!.status == "تم الاستلام من المتجر")
+              if(widget.order!["status"] == "تم الاستلام من المتجر")
                 Column(
                   children: [
                     CustomButton(text: "التوجه للعميل", onPressed: (){
-                      print("jhbhjbh ${double.parse(widget.order!.driver!.lat.toString())}");
-                      GoogleMapInitialize.openMap(double.parse(widget.order!.driver!.lat.toString()), double.parse(widget.order!.driver!.lang.toString()));
+                  //    print("jhbhjbh ${double.parse(widget.order!.driver!.lat.toString())}");
+                      GoogleMapInitialize.openMap(double.parse("20"/*widget.order!.driver!.lat.toString()*/), double.parse("30"/*widget.order!.driver!.lang.toString()*/));
                     }),
                     const SizedBox(height: 10,),
                     ChangeNotifierProvider(
@@ -208,7 +238,7 @@ class _ClientPageState extends State<ClientPage> {
                                             ),
                                             CustomButton(text: "ارسال", onPressed: () async {
                                               Map<String,dynamic> formData = {
-                                                "orderid": widget.order!.id.toString(),
+                                                "orderid": widget.order!["id"],
                                                 "status": "back",
                                                 "reason": reasonProvider.reasonsModel.data![reasonProvider.radioButtonValue].name
                                               };
@@ -266,7 +296,7 @@ class _ClientPageState extends State<ClientPage> {
                                 const SizedBox(height: 10,),
                                 CustomButton(text: "ارسال", onPressed: () async {
                                   Map<String,String> formData = {
-                                    "orderid": widget.order!.id.toString(),
+                                    "orderid": widget.order!["id"],
                                     "userid": userIdController.text
                                   };
                                   if(img==null){
@@ -290,10 +320,10 @@ class _ClientPageState extends State<ClientPage> {
                     ),
                   ],
                 )
-              else if(widget.order!.status == "تم الموافقة من المتجر")
+              else if(widget.order!["status"] == "تم الموافقة من المتجر")
                 CustomButton(text: "الموافقة علي الطلب", onPressed: () async {
                   Map<String,dynamic> formData = {
-                    "orderid": widget.order!.id.toString(),
+                    "orderid": widget.order!["id"],
                     "status": "accept",
                     "reason": ""
                   };
@@ -309,5 +339,8 @@ class _ClientPageState extends State<ClientPage> {
         ),
       ),
     );
+  }
+  Future<void> onMapCreated(GoogleMapController controller) async {
+    mapController = controller;
   }
 }

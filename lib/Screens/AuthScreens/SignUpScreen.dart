@@ -421,7 +421,9 @@ toast("الرقم السرى لابد ان يكون اكثر من ستة عنا�
                             );
                             if (res == 'success') {
                               submitForm();
-                              toast("تم التسجيل بنجاح", context);
+                            //  toast("تم التسجيل بنجاح", context);
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Directionality(textDirection: TextDirection.rtl,child: Text("تم التسجيل بنجاح"))));
+
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => HomeScreen(),
